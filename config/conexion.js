@@ -2,8 +2,8 @@ const { createPool } = require('mysql')
 
 const connetc = createPool({
     host: 'localhost',
-    user: 'root',
-    password: '',
+    user: 'admin',
+    password: 'admin',
     database: 'users',
 })
 

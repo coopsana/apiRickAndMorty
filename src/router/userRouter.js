@@ -7,12 +7,13 @@ const query = util.promisify(connect.query).bind(connect)
 
 //const userRouter = require('../router/')
 
-router.get('/', async (req, res) => {
+router.get('/', async(req, res) => {
     try {
         const users = await query('SELECT * FROM users.user')
         res.json({
             ok: true,
-            message: 'consulta satisfatoria',users
+            message: 'consulta satisfatoria',
+            users
         })
     } catch (error) {
         res.json({
@@ -22,11 +23,11 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.post('/', async (req, res) => {
-    const { nombre, apellido } = req.body
+router.post('/', async(req, res) => {
+    const { nombre, apellido, user, pass } = req.body
     try {
-        await query(`INSERT INTO users.user (nombre, apellido)
-                    VALUES ('${nombre}', '${apellido}')`)
+        await query(`INSERT INTO users.user (nombre, apellido, user, pass)
+                    VALUES ('${nombre}', '${apellido}', '${user}', '${pass}')`)
         res.json({
             ok: true,
             message: 'registro insertado satisfactoriamente'
@@ -39,12 +40,11 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.put('/:id', async (req, res) =>{
-    const {id} = req.params
+router.put('/:id', async(req, res) => {
+    const { id } = req.params
     const { nuevoNombre } = req.body
     if (id > 0) {
-        try {
-        } catch (error) {
+        try {} catch (error) {
             res.json({
                 ok: false,
                 error
@@ -65,10 +65,10 @@ router.put('/:id', async (req, res) =>{
     }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async(req, res) => {
     const { id } = req.params
-    // console.log(`DELETE FROM users.user
-    // WHERE id = '${id}'`);
+        // console.log(`DELETE FROM users.user
+        // WHERE id = '${id}'`);
     try {
         await query(`DELETE FROM users.user
                      WHERE id = '${id}'`)

@@ -7,44 +7,57 @@ const query = util.promisify(connect.query).bind(connect)
 
 //const userRouter = require('../router/')
 
-router.post('/', async (req, res) => {
-
+router.post('/iniciar_sesion', async(req, res) => {
     const { user, pass } = req.body;
     if (user && pass) {
         try {
             const rows = await query(`SELECT * FROM users.user WHERE user = '${user}' AND pass = '${pass}'`)
+            console.log(rows);
             if (rows.length > 0) {
                 try {
-                    const rows = await query(`INSERT INTO users.user (user, pass)
-                                VALUES ('${user}', '${pass}')`)
+                    await query(`UPDATE  users.user SET login = 1 WHERE id=${rows[0].id}`)
                     res.json({
-                        message: "datos insertados correctamente en la BD"
+                        login: true,
+                        message: "inicio de sesion correcta"
                     })
                 } catch (error) {
                     res.json({
-                        message: "no se pudo guardar el registro en la BD"
+                        login: false,
+                        message: "Error",
+                        error
                     })
                 }
-                res.json({
-                    login: true,
-                    message: "inicio de sesion correcta"
-                })
             } else {
-                    res.json({
+                res.json({
                     login: false,
                     message: "acceso denegado"
                 })
             }
         } catch (error) {
             res.json({
-                message: "no se pudo completar el proceso revisa bien tu imformacion"
+                message: "no se pudo completar el proceso revisa bien tu imformacion",
+                error
             })
         }
-
     } else {
         res.status(400).json({
             login: false,
             message: "asegurate de enviar user and pass"
+        })
+    }
+})
+
+router.post('/cerrar_sesion/:id', async(req, res) => {
+    const { id } = req.params
+    try {
+        await query(`UPDATE users.user SET login = 0 WHERE id=${id}`)
+        res.json({
+            message: 'Sesion cerrada satisfactoriamente'
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error',
+            error: error.sqlMessage
         })
     }
 })
